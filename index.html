@@ -4,9 +4,12 @@
 	<title></title>
 	<script>
 
-function Car(name){
+
+function Car(name, direction){
 	this.name = name; //name of the car for ease of determination of objects
 	this.currentState = null; //the current state of the car, ie stopped or started
+    this.direction = direction; //the current direction of the car's travel
+
 	this.stop = function(){
 		//make the car console log a message to indicate it is stopping
 		console.log(this.name + ' car is stopping');
@@ -17,36 +20,107 @@ function Car(name){
 		console.log(this.name + ' car is driving');
 		this.currentState = 'driving';
 	};
+	this.start = function(direction) {
+	    if (direction === 'e/w') {
+	        this.currentState = 'driving';
+		} else {
+	        this.currentState = 'stopped';
+		}
+	}
 }
 
 function TrafficLight(){
-	this.cars = [];
-	this.addCar = function(name){
+
+//	this.cars = [];
+    this.cars = {
+        'e/w': [],
+        'n/s': []
+    };
+	this.addCar = function(name, direction){
 		//add a car to the list of cars that will be made
 		//probably should make the cars here too
-		var name = new Car(name);
-		this.cars.push(name);
+		var name = new Car(name, direction);
+		name.start(direction);
+		this.cars[direction].push(name);
 
 	};
-	this.turnRed = function(){
-		//make all the cars stop
-		for (var i = 0; i < this.cars.length; i++) {
-		    this.cars[i].stop();
-		}
-	};
-	this.turnGreen = function(){
-		//make all the cars start
-		for (var i = 0; i < this.cars.length; i++) {
-		    this.cars[i].drive();
-		}
-	};
-}
+//	this.turnRed = function(){
+//		//make all the cars stop
+//		for (var i = 0; i < this.cars.length; i++) {
+//		    this.cars[i].stop();
+//		}
+//	};
+//	this.turnGreen = function(){
+//		//make all the cars start
+//		for (var i = 0; i < this.cars.length; i++) {
+//		    this.cars[i].drive();
+//		}
+//	};
+
+
+
+	this.toggleDirection= function(direction) {
+        //change the direction of traffic flow.
+        //for example, if direction is e/w, make direction n/s
+        //then adjust cars' movement based upon their direction
+        if (direction === 'n/s') {
+            if (this.cars['n/s'][0] !== undefined && this.cars['n/s'][0].currentState !== 'driving') {
+                for (var car in this.cars['e/w']) {
+                    this.cars['e/w'][car].stop();
+                    console.log(this.cars['e/w'][car].name + ' is stopped')
+                }
+                for (var car in this.cars['n/s']) {
+                    this.cars['n/s'][car].drive();
+                    console.log(this.cars['n/s'][car].name + ' is started')
+                }
+            } else if (this.cars['n/s'][0] === undefined) {
+                console.log("There Are No cars going in this direction.")
+                for (var car in this.cars['e/w']) {
+                    this.cars['e/w'][car].stop();
+                    console.log(this.cars['e/w'][car].name + ' is stopped')
+                }
+            } else {
+                console.log("This is already the current flow of traffic.")
+            }
+
+        } else {
+            if (this.cars['e/w'][0] !== undefined && this.cars['e/w'][0].currentState !== 'driving') {
+                for (var car in this.cars['n/s']) {
+                    this.cars['n/s'][car].stop();
+                    console.log(this.cars['n/s'][car].name + ' is stopped')
+                }
+                for (var car in this.cars['e/w']) {
+                    this.cars['e/w'][car].drive();
+                    console.log(this.cars['e/w'][car].name + ' is started')
+
+                }
+            } else if (this.cars['n/s'][0] === undefined) {
+                console.log("There Are No cars going in this direction.")
+                for (var car in this.cars['n/s']) {
+                    this.cars['n/s'][car].stop();
+                    console.log(this.cars['n/s'][car].name + ' is stopped')
+                }
+            } else {
+                console.log("This is already the current flow of traffic.")
+            }
+
+        }
+        ;
+    };
+//	};
+};
 
 var streetLight = new TrafficLight();
-streetLight.addCar('blackBMW');
-streetLight.addCar('redMercedes');
-streetLight.turnGreen();
-streetLight.turnRed();
+streetLight.addCar('blackBMW', 'e/w');
+streetLight.addCar('redMercedes', 'n/s');
+streetLight.addCar('blueMazda', 'n/s');
+streetLight.addCar('whiteHonda', 'e/w');
+streetLight.toggleDirection('n/s');
+streetLight.toggleDirection('n/s');
+streetLight.toggleDirection('e/w');
+
+//streetLight.turnGreen();
+//streetLight.turnRed();
 
 	</script>
 </head>
